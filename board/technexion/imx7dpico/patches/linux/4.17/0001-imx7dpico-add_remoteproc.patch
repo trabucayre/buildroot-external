@@ -1,0 +1,26 @@
+Index: linux-4.17/arch/arm/boot/dts/imx7d-pico-pi.dts
+===================================================================
+--- linux-4.17.orig/arch/arm/boot/dts/imx7d-pico-pi.dts
++++ linux-4.17/arch/arm/boot/dts/imx7d-pico-pi.dts
+@@ -58,6 +58,21 @@
+ 			clocks = <&clks IMX7D_AUDIO_MCLK_ROOT_CLK>;
+ 		};
+ 	};
++
++	m4_reserved_sysmem1: cm4@00910000 {
++		reg = <0x00910000 0x10000>;
++	};
++								 
++	m4_reserved_sysmem2: cm4@00920000 {
++		reg = <0x00920000 0x20000>;
++	};
++														 
++	imx7d-cm4 {
++		compatible = "fsl,imx7d-cm4";
++		memory-region = <&m4_reserved_sysmem1>, <&m4_reserved_sysmem2>;
++		syscon = <&src>;
++		clocks = <&clks IMX7D_ARM_M4_ROOT_CLK>;
++	};
+ };
+ 
+ &fec1 {

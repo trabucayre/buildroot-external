@@ -1,0 +1,12 @@
+Index: u-boot-2018.05/configs/pico-imx7d_defconfig
+===================================================================
+--- u-boot-2018.05.orig/configs/pico-imx7d_defconfig
++++ u-boot-2018.05/configs/pico-imx7d_defconfig
+@@ -26,6 +26,7 @@ CONFIG_CMD_FS_GENERIC=y
+ CONFIG_FSL_ESDHC=y
+ CONFIG_PHYLIB=y
+ CONFIG_USB=y
++CONFIG_IMX_BOOTAUX=y
+ CONFIG_USB_EHCI_HCD=y
+ CONFIG_MXC_USB_OTG_HACTIVE=y
+ CONFIG_USB_STORAGE=y

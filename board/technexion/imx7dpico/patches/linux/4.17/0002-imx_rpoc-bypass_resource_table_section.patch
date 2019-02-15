@@ -1,0 +1,23 @@
+Index: linux-4.17/drivers/remoteproc/imx_rproc.c
+===================================================================
+--- linux-4.17.orig/drivers/remoteproc/imx_rproc.c
++++ linux-4.17/drivers/remoteproc/imx_rproc.c
+@@ -17,6 +17,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/remoteproc.h>
++#include <linux/firmware.h>
++#include "remoteproc_internal.h"
+ 
+ #define IMX7D_SRC_SCR			0x0C
+ #define IMX7D_ENABLE_M4			BIT(3)
+@@ -247,6 +249,9 @@ static const struct rproc_ops imx_rproc_
+ 	.start		= imx_rproc_start,
+ 	.stop		= imx_rproc_stop,
+ 	.da_to_va       = imx_rproc_da_to_va,
++	.get_boot_addr	= rproc_elf_get_boot_addr,
++	.load = rproc_elf_load_segments,
++	.sanity_check	= rproc_elf_sanity_check,
+ };
+ 
+ static int imx_rproc_addr_init(struct imx_rproc *priv,
