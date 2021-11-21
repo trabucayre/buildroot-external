@@ -1,0 +1,9 @@
+config BR2_PACKAGE_YOSYS_ABC
+	bool "yosys-abc"
+	#depends on !BR2_STATIC_LIBS # tcl
+	select BR2_PACKAGE_READLINE
+
+	help
+	  ABC: System for Sequential Logic Synthesis and Formal Verification
+
+	  https://www.github.com/YosysHQ/abc

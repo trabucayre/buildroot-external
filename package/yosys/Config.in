@@ -1,0 +1,88 @@
+comment "yosys needs a toolchain w/ C++, threads, dynamic library"
+	depends on BR2_USE_MMU
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_TOOLCHAIN_HAS_THREADS || \
+		BR2_STATIC_LIBS
+comment "yosys needs python3"
+	depends on !BR2_PACKAGE_PYTHON3
+comment "yosys depends on zlib"
+	depends on !BR2_PACKAGE_ZLIB
+
+config BR2_PACKAGE_YOSYS
+	bool "yosys"
+	depends on BR2_INSTALL_LIBSTDCPP
+	#depends on BR2_USE_WCHAR # readline, boost
+	depends on BR2_USE_MMU # tcl
+	depends on BR2_TOOLCHAIN_HAS_THREADS # tcl, libffi
+	depends on !BR2_STATIC_LIBS # tcl
+	#depends on BR2_PACKAGE_BUSYBOX_SHOW_OTHERS
+	depends on BR2_PACKAGE_PYTHON3
+	depends on BR2_PACKAGE_ZLIB
+	select BR2_PACKAGE_READLINE
+	select BR2_PACKAGE_TCL
+	select BR2_PACKAGE_LIBFFI
+	select BR2_PACKAGE_BOOST
+	select BR2_PACKAGE_BOOST_SYSTEM
+	select BR2_PACKAGE_BOOST_PYTHON
+	select BR2_PACKAGE_YOSYS_ABC
+
+	help
+	  yosys : Yosys Open SYnthesis Suite
+
+	  This is a framework for RTL synthesis tools. It currently has
+	  extensive Verilog-2005 support and provides a basic set of
+	  synthesis algorithms for various application domains.
+
+	  https://www.github.com/YosysHQ/yosys
+
+if BR2_PACKAGE_YOSYS
+
+config BR2_PACKAGE_YOSYS_TCL
+	bool "tcl"
+	default y
+	select BR2_PACKAGE_TCL
+	help
+	  TCL support
+
+config BR2_PACKAGE_YOSYS_LIBYOSYS
+	bool "libosys"
+	help
+	  pyosys support
+
+config BR2_PACKAGE_YOSYS_PYOSYS
+	bool "pyosys"
+	depends on BR2_PACKAGE_PYTHON3
+	select BR2_PACKAGE_YOSYS_LIBYOSYS
+	help
+	  pyosys support
+
+config BR2_PACKAGE_YOSYS_GLOB
+	bool "tcl"
+	default y
+	help
+	  GLOB support
+
+config BR2_PACKAGE_YOSYS_PLUGINS
+	bool "plugins"
+	default y
+	help
+	  plugins support
+
+config BR2_PACKAGE_YOSYS_READLINE
+	bool "readline"
+	default y
+	help
+	  readline support
+
+config BR2_PACKAGE_YOSYS_EDITLINE
+	bool "editline"
+	help
+	  editline support
+
+config BR2_PACKAGE_YOSYS_ZLIB
+	bool "zlib"
+	default y
+	depends on BR2_PACKAGE_ZLIB
+	help
+	  zlib support
+
+endif
