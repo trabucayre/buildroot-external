@@ -1,6 +1,9 @@
+comment "yosys-abc needs a toolchain w/ NPTL"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS_NPTL
+
 config BR2_PACKAGE_YOSYS_ABC
 	bool "yosys-abc"
-	#depends on !BR2_STATIC_LIBS # tcl
+	depends on BR2_TOOLCHAIN_HAS_THREADS_NPTL
 	select BR2_PACKAGE_READLINE
 
 	help
