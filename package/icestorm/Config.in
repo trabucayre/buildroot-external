@@ -1,0 +1,28 @@
+comment "icestorm needs python3"
+	depends on !BR2_PACKAGE_PYTHON3
+
+config BR2_PACKAGE_ICESTORM
+	bool "icestorm"
+	depends on BR2_PACKAGE_PYTHON3
+
+	help
+	  Project IceStorm aims at documenting the bitstream format of
+	  Lattice iCE40 FPGAs and providing simple tools for analyzing
+	  and creating bitstream files.
+
+	  http://www.clifford.at/icestorm/
+
+if BR2_PACKAGE_ICESTORM
+
+comment "iceprog needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_ICESTORM_ICEPROG
+	bool "iceprog"
+	default y
+	depends on BR2_TOOLCHAIN_HAS_THREADS # libftdi1
+	depends on BR2_TOOLCHAIN_GCC_AT_LEAST_4_9 # libftdi1
+	select BR2_PACKAGE_LIBFTDI1
+
+endif
