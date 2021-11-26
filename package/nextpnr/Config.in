@@ -1,0 +1,49 @@
+comment "nextpnr needs python3"
+	depends on !BR2_PACKAGE_PYTHON3
+
+comment "nextpnr needs a toolchain w/ threads, wchar"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || !BR2_USE_WCHAR
+
+comment "nextpnr needs a toolchain not affected by GCC bug 43744 and 64735"
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_43744
+	depends on BR2_TOOLCHAIN_HAS_GCC_BUG_64735
+
+config BR2_PACKAGE_NEXTPNR
+	bool "nextpnr"
+	depends on BR2_PACKAGE_PYTHON3
+	depends on BR2_TOOLCHAIN_HAS_THREADS # boost
+	depends on BR2_USE_WCHAR # boost
+	depends on BR2_TOOLCHAIN_SUPPORTS_ALWAYS_LOCKFREE_ATOMIC_INTS # boost-filesystem
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_43744
+	depends on !BR2_TOOLCHAIN_HAS_GCC_BUG_64735 # boost-thread
+	select BR2_PACKAGE_BOOST
+	select BR2_PACKAGE_BOOST_FILESYSTEM
+	select BR2_PACKAGE_BOOST_PROGRAM_OPTIONS
+	select BR2_PACKAGE_BOOST_THREAD
+	select BR2_PACKAGE_BOOST_IOSTREAMS
+
+	help
+	  Project IceStorm aims at documenting the bitstream format of
+	  Lattice iCE40 FPGAs and providing simple tools for analyzing
+	  and creating bitstream files.
+
+	  http://www.clifford.at/nextpnr/
+
+if BR2_PACKAGE_NEXTPNR
+
+comment "iceprog needs a toolchain w/ threads, gcc >= 4.9"
+	depends on !BR2_TOOLCHAIN_HAS_THREADS || \
+		!BR2_TOOLCHAIN_GCC_AT_LEAST_4_9
+
+config BR2_PACKAGE_NEXTPNR_GENERIC
+	bool "generic arch"
+
+comment "ice40 support needs icestorm"
+	depends on !BR2_PACKAGE_ICESTORM
+
+config BR2_PACKAGE_NEXTPNR_ICE40
+	bool "ice40"
+	depends on BR2_PACKAGE_ICESTORM
+
+
+endif
