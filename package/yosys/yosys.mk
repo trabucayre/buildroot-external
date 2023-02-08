@@ -3,17 +3,16 @@
 # yosys
 #
 ################################################################################
-YOSYS_VERSION = yosys-0.11
+YOSYS_VERSION = yosys-0.26
 YOSYS_SITE = $(call github,YosysHQ,yosys,$(YOSYS_VERSION))
 
 YOSYS_LICENSE = ISC
 YOSYS_LICENSE_FILES = COPYING
 
-YOSYS_DEPENDENCIES = host-bison host-flex host-gawk yosys-abc
+YOSYS_DEPENDENCIES = host-bison host-flex host-gawk
 
 YOSYS_MAKEFILE_CONF= \
 	ENABLE_ABC=1 \
-	ABCEXTERNAL=yosys-abc \
 	ENABLE_GLOB=$(if $(BR2_PACKAGE_YOSYS_GLOB),1,0) \
 	ENABLE_EDITLINE=0 \
 	ENABLE_GHDL=0 \

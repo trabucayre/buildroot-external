@@ -5,7 +5,6 @@ comment "yosys needs a toolchain w/ C++"
 config BR2_PACKAGE_YOSYS
 	bool "yosys"
 	depends on BR2_INSTALL_LIBSTDCPP
-	select BR2_PACKAGE_YOSYS_ABC
 
 	help
 	  yosys : Yosys Open SYnthesis Suite
