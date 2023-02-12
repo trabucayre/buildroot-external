@@ -11,5 +11,5 @@ Temporary repository to store out-of-tree package or boards configurations
 
 - icestorm
 - nextpnr
-- yosys
+- yosys (0.26)
 - yosys-abc
