@@ -3,7 +3,7 @@
 # icestorm
 #
 ################################################################################
-ICESTORM_VERSION = 83b8ef947f77723f602b706eac16281e37de278c
+ICESTORM_VERSION = 8649e3e0bd0e09429898d2569ef65cc9fd3eafd7
 ICESTORM_SITE = $(call github,YosysHQ,icestorm,$(ICESTORM_VERSION))
 
 ICESTORM_LICENSE = MIT
