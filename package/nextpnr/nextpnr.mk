@@ -3,13 +3,18 @@
 # nextpnr
 #
 ################################################################################
-NEXTPNR_VERSION = fd2d4a8f999947ece42f791e19ddc4c2d8b823f2
+
+NEXTPNR_VERSION = nextpnr-0.5
 NEXTPNR_SITE = $(call github,YosysHQ,nextpnr,$(NEXTPNR_VERSION))
 
-NEXTPNR_LICENSE = MIT
+NEXTPNR_LICENSE = ISC
 NEXTPNR_LICENSE_FILES = COPYING
 
+#NEXTPNR_SUPPORTS_IN_SOURCE_BUILD = NO
+
 NEXTPNR_DEPENDENCIES = python3 boost
+
+NEXTPNR_INSTALL_TARGET_OPTS = DESTDIR=$(TARGET_DIR) install
 
 NEXTPNR_CONF_OPTS= \
 	-DBUILD_GUI=OFF \
@@ -38,10 +43,12 @@ endif
 
 ifeq ($(BR2_PACKAGE_NEXTPNR_ICE40),y)
 NEXTPNR_ARCH += ice40
+NEXTPNR_DEPENDENCIES += icestorm
 NEXTPNR_CONF_OPTS += -DICESTORM_INSTALL_PREFIX=$(STAGING_DIR)/usr
 endif
 
-NEXTPNR_CONF_OPTS += -DARCH=$(NEXTPNR_ARCH)
+semicolon=;
+NEXTPNR_CONF_OPTS += -DARCH="$(subst $(space),$(backslash)$(semicolon),$(NEXTPNR_ARCH))"
 
 define NEXTPNR_PRE_CONF
 	cd $(@D)/bba; \
