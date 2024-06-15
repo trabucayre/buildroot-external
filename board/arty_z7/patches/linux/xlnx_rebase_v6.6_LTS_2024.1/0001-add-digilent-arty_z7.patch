@@ -1,20 +1,19 @@
-Index: linux-xilinx-v2021.2/arch/arm/boot/dts/Makefile
+Index: linux-xlnx-xlnx_rebase_v6.6_LTS_2024.1/arch/arm/boot/dts/xilinx/Makefile
 ===================================================================
---- linux-xilinx-v2021.2.orig/arch/arm/boot/dts/Makefile
-+++ linux-xilinx-v2021.2/arch/arm/boot/dts/Makefile
-@@ -1291,6 +1291,7 @@ dtb-$(CONFIG_ARCH_VT8500) += \
- 	wm8750-apc8750.dtb \
- 	wm8850-w70v2.dtb
+--- linux-xlnx-xlnx_rebase_v6.6_LTS_2024.1.orig/arch/arm/boot/dts/xilinx/Makefile
++++ linux-xlnx-xlnx_rebase_v6.6_LTS_2024.1/arch/arm/boot/dts/xilinx/Makefile
+@@ -1,5 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0
  dtb-$(CONFIG_ARCH_ZYNQ) += \
 +	zynq-arty-z7.dtb \
  	zynq-cc108.dtb \
+ 	zynq-ebaz4205.dtb \
  	zynq-microzed.dtb \
- 	zynq-parallella.dtb \
-Index: linux-xilinx-v2021.2/arch/arm/boot/dts/zynq-arty-z7.dts
+Index: linux-xlnx-xlnx_rebase_v6.6_LTS_2024.1/arch/arm/boot/dts/xilinx/zynq-arty-z7.dts
 ===================================================================
 --- /dev/null
-+++ linux-xilinx-v2021.2/arch/arm/boot/dts/zynq-arty-z7.dts
-@@ -0,0 +1,68 @@
++++ linux-xlnx-xlnx_rebase_v6.6_LTS_2024.1/arch/arm/boot/dts/xilinx/zynq-arty-z7.dts
+@@ -0,0 +1,71 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/dts-v1/;
 +#include "zynq-7000.dtsi"
@@ -50,8 +49,11 @@ Index: linux-xilinx-v2021.2/arch/arm/boot/dts/zynq-arty-z7.dts
 +
 +	usb_phy0: phy0 {
 +		#phy-cells = <0>;
-+		compatible = "usb-nop-xceiv";
-+		reset-gpios = <&gpio0 47 GPIO_ACTIVE_LOW>;
++		compatible = "ulpi-phy";
++		reg = <0xe0002000 0x1000>;
++		view-port = <0x0170>;
++		drv-vbus;
++		//reset-gpios = <&gpio0 46 GPIO_ACTIVE_LOW>;
 +	};
 +};
 +

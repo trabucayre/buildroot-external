@@ -3,7 +3,9 @@
 # include the linux device tree name corresponding to the desired
 # configuration to the genimage configuration file
 
-DTB="$(sed -n 's/^BR2_LINUX_KERNEL_INTREE_DTS_NAME="\([\/a-z0-9_ \-]*\)"$/\1/p' ${BR2_CONFIG})"
+DTB=$(sed -nr \
+          -e 's|^BR2_LINUX_KERNEL_INTREE_DTS_NAME="(xilinx/)?([-_/[:alnum:]\\.]*).*"$|\2|p' \
+          "${BR2_CONFIG}")
 BOARD_DIR="$(dirname $0)"
 
 ${HOST_DIR}/bin/mkimage -c none -A arm -T script -d ${BOARD_DIR}/sdboot.cmd ${BINARIES_DIR}/boot.scr
