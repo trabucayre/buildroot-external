@@ -1,28 +1,27 @@
-Index: uboot-xilinx-v2021.2/arch/arm/dts/Makefile
+Index: u-boot-xlnx-xlnx_rebase_v2025.01_2025.1/arch/arm/dts/Makefile
 ===================================================================
---- uboot-xilinx-v2021.2.orig/arch/arm/dts/Makefile
-+++ uboot-xilinx-v2021.2/arch/arm/dts/Makefile
-@@ -290,6 +290,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
+--- u-boot-xlnx-xlnx_rebase_v2025.01_2025.1.orig/arch/arm/dts/Makefile
++++ u-boot-xlnx-xlnx_rebase_v2025.01_2025.1/arch/arm/dts/Makefile
+@@ -253,6 +253,7 @@ dtb-$(CONFIG_ARCH_ZYNQ) += \
  	zynq-zybo.dtb \
  	zynq-zybo-z7.dtb
  dtb-$(CONFIG_ARCH_ZYNQMP) += \
 +	alinx-axu2cga.dtb				\
  	avnet-ultra96-rev1.dtb			\
- 	avnet-ultrazedev-cc-v1.0-ultrazedev-som-v1.0.dtb	\
  	zynqmp-a2197-revA.dtb			\
-Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
+ 	zynqmp-dlc21-revA.dtb			\
+Index: u-boot-xlnx-xlnx_rebase_v2025.01_2025.1/arch/arm/dts/alinx-axu2cga.dts
 ===================================================================
 --- /dev/null
-+++ uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
-@@ -0,0 +1,539 @@
++++ u-boot-xlnx-xlnx_rebase_v2025.01_2025.1/arch/arm/dts/alinx-axu2cga.dts
+@@ -0,0 +1,434 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * dts file for Xilinx ZynqMP ZCU100 revC
++ * dts file for Xilinx ZynqMP alinx AXU2CGA
 + *
-+ * (C) Copyright 2016 - 2021, Xilinx, Inc.
++ * (C) Copyright 2022
 + *
-+ * Michal Simek <michal.simek@xilinx.com>
-+ * Nathalie Chan King Choy
++ * Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
 + */
 +
 +/dts-v1/;
@@ -44,7 +43,7 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +		i2c0 = &i2c1;
 +		rtc0 = &rtc;
 +		serial0 = &uart1;
-+		//spi0 = &spi1;
++		spi0 = &spi1;
 +		usb0 = &usb0;
 +	};
 +
@@ -58,118 +57,82 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +		reg = <0x0 0x0 0x0 0x40000000>;
 +	};
 +
-+	/*gpio-keys {
-+		compatible = "gpio-keys";
-+		autorepeat;
-+		sw4 {
-+			label = "sw4";
-+			gpios = <&gpio 23 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			wakeup-source;
-+			autorepeat;
-+		};
++	/*cpus {
++		/delete-node/ cpu@2;
++		/delete-node/ cpu@3;
 +	};*/
 +
-+	/*iio-hwmon {
-+		compatible = "iio-hwmon";
-+		io-channels = <&xilinx_ams 0>, <&xilinx_ams 1>, <&xilinx_ams 2>,
-+			      <&xilinx_ams 3>, <&xilinx_ams 4>, <&xilinx_ams 5>,
-+			      <&xilinx_ams 6>, <&xilinx_ams 7>, <&xilinx_ams 8>,
-+			      <&xilinx_ams 9>, <&xilinx_ams 10>,
-+			      <&xilinx_ams 11>, <&xilinx_ams 12>;
-+	};*/
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupt-parent = <&gic>;
++		interrupts = <0 143 4>,
++				<0 144 4>;
++		interrupt-affinity = <&cpu0>,
++				<&cpu1>;
++	};
 +
-+	//leds {
-+	//	compatible = "gpio-leds";
-+	//	led-ds2 {
-+	//		label = "ds2";
-+	//		gpios = <&gpio 20 GPIO_ACTIVE_HIGH>;
-+	//		linux,default-trigger = "heartbeat";
-+	//	};
++	clock_si5332_0: clk27 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
 +
-+	//	led-ds3 {
-+	//		label = "ds3";
-+	//		gpios = <&gpio 19 GPIO_ACTIVE_HIGH>;
-+	//		linux,default-trigger = "phy0tx"; /* WLAN tx */
-+	//		default-state = "off";
-+	//	};
++	clock_si5332_1: clk26 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
 +
-+	//	led-ds4 {
-+	//		label = "ds4";
-+	//		gpios = <&gpio 18 GPIO_ACTIVE_HIGH>;
-+	//		linux,default-trigger = "phy0rx"; /* WLAN rx */
-+	//		default-state = "off";
-+	//	};
++	clock_si5332_2: clk25 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
 +
-+	//	led-ds5 {
-+	//		label = "ds5";
-+	//		gpios = <&gpio 17 GPIO_ACTIVE_HIGH>;
-+	//		linux,default-trigger = "bluetooth-power";
-+	//	};
++	clock_si5332_3: clk33 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33300000>;
++	};
 +
-+	//	vbus-det { /* U5 USB5744 VBUS detection via MIO25 */
-+	//		label = "vbus_det";
-+	//		gpios = <&gpio 25 GPIO_ACTIVE_HIGH>;
-+	//		default-state = "on";
-+	//	};
-+	//};
++	clock_si5332_4: clk1001 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++	};
 +
-+	//ltc2954: ltc2954 { /* U7 */
-+	//	compatible = "lltc,ltc2954", "lltc,ltc2952";
-+	//	status = "disabled";
-+	//	trigger-gpios = <&gpio 26 GPIO_ACTIVE_LOW>; /* INT line - input */
-+	//	/* If there is HW watchdog on mezzanine this signal should be connected there */
-+	//	watchdog-gpios = <&gpio 35 GPIO_ACTIVE_HIGH>; /* MIO on PAD */
-+	//	kill-gpios = <&gpio 34 GPIO_ACTIVE_LOW>; /* KILL signal - output */
-+	//};
++	clock_si5332_5: clk1002 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++	};
 +
-+	//wmmcsdio_fixed: fixedregulator-mmcsdio {
-+	//	compatible = "regulator-fixed";
-+	//	regulator-name = "wmmcsdio_fixed";
-+	//	regulator-min-microvolt = <3300000>;
-+	//	regulator-max-microvolt = <3300000>;
-+	//	regulator-always-on;
-+	//	regulator-boot-on;
-+	//};
++	clock_si5332_6: clk25_eth {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
 +
-+	//sdio_pwrseq: sdio-pwrseq {
-+	//	compatible = "mmc-pwrseq-simple";
-+	//	reset-gpios = <&gpio 7 GPIO_ACTIVE_LOW>; /* WIFI_EN */
-+	//	post-power-on-delay-ms = <10>;
-+	//};
-+
-+	//ina226 {
-+	//	compatible = "iio-hwmon";
-+	//	io-channels = <&u35 0>, <&u35 1>, <&u35 2>, <&u35 3>;
-+	//};
-+
-+	//si5335_0: si5335_0 { /* clk0_usb - u23 */
-+	//	compatible = "fixed-clock";
-+	//	#clock-cells = <0>;
-+	//	clock-frequency = <26000000>;
-+	//};
-+
-+	//si5335_1: si5335_1 { /* clk1_dp - u23 */
-+	//	compatible = "fixed-clock";
-+	//	#clock-cells = <0>;
-+	//	clock-frequency = <27000000>;
-+	//};
++	/* 26MHz reference crystal */
++	ref26: ref26M {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
 +};
-+
-+//&dcc {
-+//	status = "okay";
-+//};
 +
 +&gem3 {
 +	status = "okay";
 +	phy-handle = <&phy0>;
 +	phy-mode = "rgmii-id";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gem3_default>;
 +	phy0: ethernet-phy@1 {
 +		reg = <0x1>;
-+		//ti,rx-internal-delay = <0x8>;
-+		//ti,tx-internal-delay = <0xa>;
-+		//ti,fifo-depth = <0x1>;
-+		//ti,dp83867-rxctrl-strap-quirk;
++		ti,rx-internal-delay = <0x8>;
++		ti,tx-internal-delay = <0xa>;
++		ti,fifo-depth = <0x1>;
++		ti,dp83867-rxctrl-strap-quirk;
 +	};
 +};
 +
@@ -213,21 +176,75 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +	pinctrl-names = "default", "gpio";
 +	pinctrl-0 = <&pinctrl_i2c1_default>;
 +	pinctrl-1 = <&pinctrl_i2c1_gpio>;
-+	scl-gpios = <&gpio 33 GPIO_ACTIVE_HIGH>;
-+	sda-gpios = <&gpio 34 GPIO_ACTIVE_HIGH>;
++	scl-gpios = <&gpio 32 GPIO_ACTIVE_HIGH>;
++	sda-gpios = <&gpio 33 GPIO_ACTIVE_HIGH>;
 +	clock-frequency = <100000>;
++	si5332: clock-generator@76 {
++		compatible = "silabs,si5332";
++		reg = <0x76>;
++		#clock-cells = <2>;
++		#address-cells = <0>;
++		clocks = <&ref26>;
++		clock-names = "xtal";
++		clock-output-names = "si5352";
++
++		si5332_0: out@0 {
++			/* refclk0 for PS-GT, used for DP */
++			reg = <0>;
++			always-on;
++		};
++		si5332_1: out@1 {
++			/* refclk1 for PS-GT, used for USB */
++			reg = <1>;
++			always-on;
++		};
++		si5332_2: out@2 {
++			/* refclk1 for PS-GT, used for USB-HUB */
++			reg = <2>;
++			always-on;
++		};
++		si5332_3: out@3 {
++			/* refclk1 for PS-GT, used for PS_REF_CLK 33.3 MHz */
++			reg = <3>;
++			always-on;
++		};
++		si5332_4: out@4 {
++			/* refclk4 for PCIe Ref clk 100 MHz */
++			reg = <4>;
++			always-on;
++		};
++		si5332_5: out@5 {
++			/* refclk5 for PCIe Ref clk 100MHz */
++			reg = <5>;
++			always-on;
++		};
++		si5332_6: out@6 {
++			/* refclk6 for PS-GT, used for ETH Phy */
++			reg = <6>;
++			always-on;
++		};
++		si5332_7: out@7 {
++			/* refclk7 for USB-PHY clock */
++			reg = <7>;
++			always-on;
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
 +};
 +
 +&pinctrl0 {
 +	status = "okay";
 +	pinctrl_i2c1_default: i2c1-default {
 +		mux {
-+			groups = "i2c1_5_grp";
++			groups = "i2c1_8_grp";
 +			function = "i2c1";
 +		};
 +
 +		conf {
-+			groups = "i2c1_5_grp";
++			groups = "i2c1_8_grp";
 +			bias-pull-up;
 +			slew-rate = <SLEW_RATE_SLOW>;
 +			power-source = <IO_STANDARD_LVCMOS18>;
@@ -236,116 +253,51 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +
 +	pinctrl_i2c1_gpio: i2c1-gpio {
 +		mux {
-+			groups = "gpio0_33_grp", "gpio0_34_grp";
++			groups = "gpio0_32_grp", "gpio0_33_grp";
 +			function = "gpio0";
 +		};
 +
 +		conf {
-+			groups = "gpio0_33_grp", "gpio0_34_grp";
++			groups = "gpio0_32_grp", "gpio0_33_grp";
 +			slew-rate = <SLEW_RATE_SLOW>;
 +			power-source = <IO_STANDARD_LVCMOS18>;
 +		};
 +	};
 +
-+	//pinctrl_sdhci0_default: sdhci0-default {
-+	//	mux {
-+	//		groups = "sdio0_3_grp";
-+	//		function = "sdio0";
-+	//	};
-+
-+	//	conf {
-+	//		groups = "sdio0_3_grp";
-+	//		slew-rate = <SLEW_RATE_SLOW>;
-+	//		power-source = <IO_STANDARD_LVCMOS18>;
-+	//		bias-disable;
-+	//	};
-+
-+	//	mux-cd {
-+	//		groups = "sdio0_cd_0_grp";
-+	//		function = "sdio0_cd";
-+	//	};
-+
-+	//	conf-cd {
-+	//		groups = "sdio0_cd_0_grp";
-+	//		bias-high-impedance;
-+	//		bias-pull-up;
-+	//		slew-rate = <SLEW_RATE_SLOW>;
-+	//		power-source = <IO_STANDARD_LVCMOS18>;
-+	//	};
-+	//};
-+
 +	pinctrl_sdhci1_default: sdhci1-default {
 +		mux {
-+			groups = "sdio1_3_grp";
++			groups = "sdio1_0_grp";
 +			function = "sdio1";
 +		};
 +
 +		conf {
-+			groups = "sdio1_3_grp";
++			groups = "sdio1_0_grp";
 +			slew-rate = <SLEW_RATE_SLOW>;
 +			power-source = <IO_STANDARD_LVCMOS18>;
 +			bias-disable;
 +		};
++
++		mux-cd {
++			groups = "sdio1_cd_0_grp";
++			function = "sdio1_cd";
++		};
++
++		conf-cd {
++			groups = "sdio1_cd_0_grp";
++			bias-high-impedance;
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
 +	};
-+
-+	//pinctrl_spi0_default: spi0-default {
-+	//	mux {
-+	//		groups = "spi0_3_grp";
-+	//		function = "spi0";
-+	//	};
-+
-+	//	conf {
-+	//		groups = "spi0_3_grp";
-+	//		bias-disable;
-+	//		slew-rate = <SLEW_RATE_SLOW>;
-+	//		power-source = <IO_STANDARD_LVCMOS18>;
-+	//	};
-+
-+	//	mux-cs {
-+	//		groups = "spi0_ss_9_grp";
-+	//		function = "spi0_ss";
-+	//	};
-+
-+	//	conf-cs {
-+	//		groups = "spi0_ss_9_grp";
-+	//		bias-disable;
-+	//	};
-+
-+	//};
-+
-+	//pinctrl_spi1_default: spi1-default {
-+	//	mux {
-+	//		groups = "spi1_0_grp";
-+	//		function = "spi1";
-+	//	};
-+
-+	//	conf {
-+	//		groups = "spi1_0_grp";
-+	//		bias-disable;
-+	//		slew-rate = <SLEW_RATE_SLOW>;
-+	//		power-source = <IO_STANDARD_LVCMOS18>;
-+	//	};
-+
-+	//	mux-cs {
-+	//		groups = "spi1_ss_0_grp";
-+	//		function = "spi1_ss";
-+	//	};
-+
-+	//	conf-cs {
-+	//		groups = "spi1_ss_0_grp";
-+	//		bias-disable;
-+	//	};
-+
-+	//};
 +
 +	pinctrl_uart1_default: uart1-default {
 +		mux {
-+			groups = "uart1_1_grp";
++			groups = "uart1_6_grp";
 +			function = "uart1";
 +		};
 +
 +		conf {
-+			groups = "uart1_1_grp";
++			groups = "uart1_6_grp";
 +			slew-rate = <SLEW_RATE_SLOW>;
 +			power-source = <IO_STANDARD_LVCMOS18>;
 +		};
@@ -361,8 +313,7 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +		};
 +	};
 +
-+	// have to check group (missing)
-+	/*pinctrl_usb0_default: usb0-default {
++	pinctrl_usb0_default: usb0-default {
 +		mux {
 +			groups = "usb0_0_grp";
 +			function = "usb0";
@@ -381,56 +332,61 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +
 +		conf-tx {
 +			pins = "MIO54", "MIO56", "MIO57", "MIO58", "MIO59",
-+			       "MIO60", "MIO61", "MIO62", "MIO63";
++				   "MIO60", "MIO61", "MIO62", "MIO63";
 +			bias-disable;
 +		};
-+	};*/
++	};
 +
-+	//pinctrl_usb1_default: usb1-default {
-+	//	mux {
-+	//		groups = "usb1_0_grp";
-+	//		function = "usb1";
-+	//	};
++	pinctrl_gem3_default: gem3-default {
++		mux {
++			function = "ethernet3";
++			groups = "ethernet3_0_grp";
++		};
 +
-+	//	conf {
-+	//		groups = "usb1_0_grp";
-+	//		slew-rate = <SLEW_RATE_SLOW>;
-+	//		power-source = <IO_STANDARD_LVCMOS18>;
-+	//	};
++		conf {
++			groups = "ethernet3_0_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
 +
-+	//	conf-rx {
-+	//		pins = "MIO64", "MIO65", "MIO67";
-+	//		bias-high-impedance;
-+	//	};
++		conf-rx {
++			pins = "MIO70", "MIO71", "MIO72", "MIO73", "MIO74",
++									"MIO75";
++			bias-high-impedance;
++			low-power-disable;
++		};
 +
-+	//	conf-tx {
-+	//		pins = "MIO66", "MIO68", "MIO69", "MIO70", "MIO71",
-+	//		       "MIO72", "MIO73", "MIO74", "MIO75";
-+	//		bias-disable;
-+	//	};
-+	//};
++		conf-tx {
++			pins = "MIO64", "MIO65", "MIO66", "MIO67", "MIO68",
++									"MIO69";
++			bias-disable;
++			low-power-enable;
++		};
++
++		mux-mdio {
++			function = "mdio3";
++			groups = "mdio3_0_grp";
++		};
++
++		conf-mdio {
++			groups = "mdio3_0_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++			bias-disable;
++		};
++	};
 +};
 +
-+//&psgtr {
-+//	status = "okay";
-+//	/* usb3, dp */
-+//	clocks = <&si5335_0>, <&si5335_1>;
-+//	clock-names = "ref0", "ref1";
-+//};
++&psgtr {
++	status = "okay";
++	/* pcie, usb3, dp */
++	clocks = <&clock_si5332_5>, <&clock_si5332_1>, <&clock_si5332_0>;
++	clock-names = "ref0", "ref1", "ref2";
++};
 +
 +&rtc {
 +	status = "okay";
 +};
-+
-+/* SD0 only supports 3.3V, no level shifter */
-+//&sdhci0 {
-+//	status = "okay";
-+//	no-1-8-v;
-+//	disable-wp;
-+//	pinctrl-names = "default";
-+//	pinctrl-0 = <&pinctrl_sdhci0_default>;
-+//	xlnx,mio-bank = <0>;
-+//};
 +
 +&sdhci1 {
 +	no-1-8-v;
@@ -439,46 +395,8 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pinctrl_sdhci1_default>;
 +	xlnx,mio-bank = <0>;
-+	//non-removable;
 +	disable-wp;
-+	//cap-power-off-card;
-+	//mmc-pwrseq = <&sdio_pwrseq>;
-+	//vqmmc-supply = <&wmmcsdio_fixed>;
-+	//#address-cells = <1>;
-+	//#size-cells = <0>;
-+	//wlcore: wifi@2 {
-+	//	compatible = "ti,wl1831";
-+	//	reg = <2>;
-+	//	interrupt-parent = <&gpio>;
-+	//	interrupts = <76 IRQ_TYPE_EDGE_RISING>; /* MIO76 WLAN_IRQ 1V8 */
-+	//};
 +};
-+
-+//&spi0 { /* Low Speed connector */
-+//	status = "okay";
-+//	label = "LS-SPI0";
-+//	num-cs = <1>;
-+//	pinctrl-names = "default";
-+//	pinctrl-0 = <&pinctrl_spi0_default>;
-+//};
-+//
-+//&spi1 { /* High Speed connector */
-+//	status = "okay";
-+//	label = "HS-SPI1";
-+//	num-cs = <1>;
-+//	pinctrl-names = "default";
-+//	pinctrl-0 = <&pinctrl_spi1_default>;
-+//};
-+
-+//&uart0 {
-+//	status = "okay";
-+//	pinctrl-names = "default";
-+//	pinctrl-0 = <&pinctrl_uart0_default>;
-+//	bluetooth {
-+//		compatible = "ti,wl1831-st";
-+//		enable-gpios = <&gpio 8 GPIO_ACTIVE_HIGH>;
-+//	};
-+//};
 +
 +&uart1 {
 +	status = "okay";
@@ -487,47 +405,36 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +};
 +
 +/* ULPI SMSC USB3320 */
-+//&usb0 {
-+//	status = "okay";
-+//	pinctrl-names = "default";
-+//	pinctrl-0 = <&pinctrl_usb0_default>;
-+//	phy-names = "usb3-phy";
-+//	phys = <&psgtr 2 PHY_TYPE_USB3 0 0>;
-+//};
-+//
-+//&dwc3_0 {
-+//	status = "okay";
-+//	dr_mode = "peripheral";
-+//	maximum-speed = "super-speed";
-+//};
++&usb0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usb0_default>;
++	phy-names = "usb3-phy";
++	phys = <&psgtr 1 PHY_TYPE_USB3 0 1>;
++};
 +
-+/* ULPI SMSC USB3320 */
-+//&usb1 {
-+//	status = "okay";
-+//	pinctrl-names = "default";
-+//	pinctrl-0 = <&pinctrl_usb1_default>;
-+//	phy-names = "usb3-phy";
-+//	phys = <&psgtr 3 PHY_TYPE_USB3 1 0>;
-+//};
-+//
-+//&dwc3_1 {
-+//	status = "okay";
-+//	dr_mode = "host";
-+//	maximum-speed = "super-speed";
-+//};
++&dwc3_0 {
++	status = "okay";
++	dr_mode = "host";
++	maximum-speed = "super-speed";
++};
 +
 +&watchdog0 {
++	status = "okay";
++};
++
++&zynqmp_dpdma {
 +	status = "okay";
 +};
 +
 +&zynqmp_dpsub {
 +	status = "okay";
 +	phy-names = "dp-phy0", "dp-phy1";
-+	phys = <&psgtr 1 PHY_TYPE_DP 0 1>,
-+	       <&psgtr 0 PHY_TYPE_DP 1 1>;
++	phys = <&psgtr 3 PHY_TYPE_DP 0 2>,
++		   <&psgtr 2 PHY_TYPE_DP 1 2>;
 +};
 +
-+&zynqmp_dp_snd_pcm0 {
++/*&zynqmp_dp_snd_pcm0 {
 +	status = "okay";
 +};
 +
@@ -541,24 +448,12 @@ Index: uboot-xilinx-v2021.2/arch/arm/dts/alinx-axu2cga.dts
 +
 +&zynqmp_dp_snd_codec0 {
 +	status = "okay";
-+};
-+
-+&zynqmp_dpdma {
-+	status = "okay";
-+};
-+
-+//&xilinx_ams {
-+//	status = "okay";
-+//};
-+//
-+//&ams_ps {
-+//	status = "okay";
-+//};
-Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
++};*/
+Index: u-boot-xlnx-xlnx_rebase_v2025.01_2025.1/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 ===================================================================
 --- /dev/null
-+++ uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
-@@ -0,0 +1,1977 @@
++++ u-boot-xlnx-xlnx_rebase_v2025.01_2025.1/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
+@@ -0,0 +1,1981 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
 + * (c) Copyright 2015 Xilinx, Inc. All rights reserved.
@@ -626,7 +521,7 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	psu_mask_write(0xFF5E0060, 0x023F3F07U, 0x02010600U);
 +	psu_mask_write(0xFF5E004C, 0x023F3F07U, 0x02031900U);
 +	psu_mask_write(0xFF5E0068, 0x013F3F07U, 0x01010500U);
-+	psu_mask_write(0xFF5E0070, 0x013F3F07U, 0x01010402U);
++	psu_mask_write(0xFF5E0070, 0x013F3F07U, 0x01010800U);
 +	psu_mask_write(0xFF18030C, 0x00020000U, 0x00000000U);
 +	psu_mask_write(0xFF5E0078, 0x013F3F07U, 0x01010F00U);
 +	psu_mask_write(0xFF5E0124, 0x013F3F07U, 0x01010F00U);
@@ -788,7 +683,7 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	psu_mask_write(0xFD080068, 0xFFFFFFFFU, 0x000E0000U);
 +	psu_mask_write(0xFD080090, 0xFFFFFFFFU, 0x02A04161U);
 +	psu_mask_write(0xFD0800C0, 0xFFFFFFFFU, 0x00000000U);
-+	psu_mask_write(0xFD0800C4, 0xFFFFFFFFU, 0x000000E3U);
++	psu_mask_write(0xFD0800C4, 0xFFFFFFFFU, 0x000000E5U);
 +	psu_mask_write(0xFD080100, 0xFFFFFFFFU, 0x0800040CU);
 +	psu_mask_write(0xFD080110, 0xFFFFFFFFU, 0x08261009U);
 +	psu_mask_write(0xFD080114, 0xFFFFFFFFU, 0x28240008U);
@@ -840,13 +735,13 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	psu_mask_write(0xFD080700, 0xFFFFFFFFU, 0x40800604U);
 +	psu_mask_write(0xFD080704, 0xFFFFFFFFU, 0x00007FFFU);
 +	psu_mask_write(0xFD08070C, 0xFFFFFFFFU, 0x3F000008U);
-+	psu_mask_write(0xFD080710, 0xFFFFFFFFU, 0x0E00B03CU);
++	psu_mask_write(0xFD080710, 0xFFFFFFFFU, 0x0E00B004U);
 +	psu_mask_write(0xFD080714, 0xFFFFFFFFU, 0x09094F4FU);
 +	psu_mask_write(0xFD080718, 0xFFFFFFFFU, 0x09092B2BU);
 +	psu_mask_write(0xFD080800, 0xFFFFFFFFU, 0x40800604U);
 +	psu_mask_write(0xFD080804, 0xFFFFFFFFU, 0x00007FFFU);
 +	psu_mask_write(0xFD08080C, 0xFFFFFFFFU, 0x3F000008U);
-+	psu_mask_write(0xFD080810, 0xFFFFFFFFU, 0x0E00B03CU);
++	psu_mask_write(0xFD080810, 0xFFFFFFFFU, 0x0E00B004U);
 +	psu_mask_write(0xFD080814, 0xFFFFFFFFU, 0x09094F4FU);
 +	psu_mask_write(0xFD080818, 0xFFFFFFFFU, 0x09092B2BU);
 +	psu_mask_write(0xFD080900, 0xFFFFFFFFU, 0x40800604U);
@@ -1076,6 +971,11 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	return 1;
 +}
 +
++unsigned long psu_post_config_data(void)
++{
++	return 1;
++}
++
 +static unsigned long psu_peripherals_powerdwn_data(void)
 +{
 +	psu_mask_write(0xFFD80218, 0x0000003CU, 0x0000003CU);
@@ -1297,7 +1197,7 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	psu_mask_write(0xFD480200, 0xFFFFFFFFU, 0x10EED011U);
 +	psu_mask_write(0xFD480204, 0xFFFFFFFFU, 0x10EE0007U);
 +	psu_mask_write(0xFD480208, 0x000000FFU, 0x00000000U);
-+	psu_mask_write(0xFD480060, 0x0000FFFFU, 0x00000400U);
++	psu_mask_write(0xFD480060, 0x0000FFFFU, 0x00008000U);
 +	psu_mask_write(0xFD480064, 0x000001FFU, 0x00000006U);
 +	psu_mask_write(0xFD480010, 0x00001000U, 0x00000000U);
 +	psu_mask_write(0xFD480164, 0x00001FFEU, 0x00000000U);
@@ -1429,7 +1329,10 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	return 1;
 +}
 +
-+static int serdes_rst_seq(u32 lane3_protocol, u32 lane3_rate, u32 lane2_protocol, u32 lane2_rate, u32 lane1_protocol, u32 lane1_rate, u32 lane0_protocol, u32 lane0_rate)
++static int serdes_rst_seq(u32 lane3_protocol, u32 lane3_rate,
++                          u32 lane2_protocol, u32 lane2_rate,
++                          u32 lane1_protocol, u32 lane1_rate,
++                          u32 lane0_protocol, u32 lane0_rate)
 +{
 +	Xil_Out32(0XFD410098, 0x00000000);
 +	Xil_Out32(0XFD401010, 0x00000040);
@@ -1690,7 +1593,11 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	return 1;
 +}
 +
-+static int serdes_illcalib_pcie_gen1(u32 lane3_protocol, u32 lane3_rate, u32 lane2_protocol, u32 lane2_rate, u32 lane1_protocol, u32 lane1_rate, u32 lane0_protocol, u32 lane0_rate, u32 gen2_calib)
++static int serdes_illcalib_pcie_gen1(u32 lane3_protocol, u32 lane3_rate,
++                                     u32 lane2_protocol, u32 lane2_rate,
++                                     u32 lane1_protocol, u32 lane1_rate,
++                                     u32 lane0_protocol, u32 lane0_rate,
++                                     u32 gen2_calib)
 +{
 +	u64 tempbistresult;
 +	u32 currbistresult[4];
@@ -1897,19 +1804,11 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	  {
 +	    ill1_val[loop] = (0x04 + (meancount[loop] * 8)) % 0x100;
 +	    ill12_val[loop] = ((0x04 + (meancount[loop] * 8)) >= 0x100) ? (0x10) : (0x00);
-+	    Xil_Out32(0xFFFE0000 + (loop * 4), iterresult[loop]);
-+	    Xil_Out32(0xFFFE0010 + (loop * 4), iterresult[loop + 4]);
-+	    Xil_Out32(0xFFFE0020 + (loop * 4), bistpasscount[loop]);
-+	    Xil_Out32(0xFFFE0030 + (loop * 4), meancount[loop]);
 +	  }
 +	  if (gen2_calib == 1)
 +	  {
 +	    ill1_val[loop] = (0x104 + (meancount[loop] * 8)) % 0x100;
 +	    ill12_val[loop] = ((0x104 + (meancount[loop] * 8)) >= 0x200) ? (0x02) : (0x01);
-+	    Xil_Out32(0xFFFE0040 + (loop * 4), iterresult[loop]);
-+	    Xil_Out32(0xFFFE0050 + (loop * 4), iterresult[loop + 4]);
-+	    Xil_Out32(0xFFFE0060 + (loop * 4), bistpasscount[loop]);
-+	    Xil_Out32(0xFFFE0070 + (loop * 4), meancount[loop]);
 +	  }
 +	}
 +
@@ -2144,7 +2043,7 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	    temp_ill12 = Xil_In32(0XFD401990) & 0xF0;
 +	    serdes_illcalib_pcie_gen1(0, 0, 0, 0, 0, 0, 1, 0, 0);
 +	    Xil_Out32(0xFD402360, temp_pll_fbdiv_frac_3_msb_offset);
-+	    Xil_Out32(0xFD41000C, temp_PLL_REF_SEL_OFFSET);
++	    Xil_Out32(0xFD410000, temp_PLL_REF_SEL_OFFSET);
 +	    Xil_Out32(0XFD4018F8, temp_TM_IQ_ILL1);
 +	    Xil_Out32(0XFD4000F4, temp_tx_dig_tm_61);
 +	    Xil_Out32(0XFD40106C, temp_tm_dig_6);
@@ -2169,7 +2068,7 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	    temp_ill12 = Xil_In32(0XFD405990) & 0xF0;
 +	    serdes_illcalib_pcie_gen1(0, 0, 0, 0, 1, 0, 0, 0, 0);
 +	    Xil_Out32(0xFD406360, temp_pll_fbdiv_frac_3_msb_offset);
-+	    Xil_Out32(0xFD41000C, temp_PLL_REF_SEL_OFFSET);
++	    Xil_Out32(0xFD410004, temp_PLL_REF_SEL_OFFSET);
 +	    Xil_Out32(0XFD4058F8, temp_TM_IQ_ILL1);
 +	    Xil_Out32(0XFD4040F4, temp_tx_dig_tm_61);
 +	    Xil_Out32(0XFD40506C, temp_tm_dig_6);
@@ -2194,7 +2093,7 @@ Index: uboot-xilinx-v2021.2/board/xilinx/zynqmp/alinx-axu2cga/psu_init_gpl.c
 +	    temp_ill12 = Xil_In32(0XFD409990) & 0xF0;
 +	    serdes_illcalib_pcie_gen1(0, 0, 1, 0, 0, 0, 0, 0, 0);
 +	    Xil_Out32(0xFD40A360, temp_pll_fbdiv_frac_3_msb_offset);
-+	    Xil_Out32(0xFD41000C, temp_PLL_REF_SEL_OFFSET);
++	    Xil_Out32(0xFD410008, temp_PLL_REF_SEL_OFFSET);
 +	    Xil_Out32(0XFD4098F8, temp_TM_IQ_ILL1);
 +	    Xil_Out32(0XFD4080F4, temp_tx_dig_tm_61);
 +	    Xil_Out32(0XFD40906C, temp_tm_dig_6);

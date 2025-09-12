@@ -1,0 +1,449 @@
+Index: linux-headers-xlnx_rebase_v6.1_LTS_2023.1/arch/arm64/boot/dts/xilinx/Makefile
+===================================================================
+--- linux-headers-xlnx_rebase_v6.1_LTS_2023.1.orig/arch/arm64/boot/dts/xilinx/Makefile
++++ linux-headers-xlnx_rebase_v6.1_LTS_2023.1/arch/arm64/boot/dts/xilinx/Makefile
+@@ -1,4 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
++dtb-$(CONFIG_ARCH_ZYNQMP) += alinx-axu2cga.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += avnet-ultra96-rev1.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1232-revA.dtb
+ dtb-$(CONFIG_ARCH_ZYNQMP) += zynqmp-zc1254-revA.dtb
+Index: linux-headers-xlnx_rebase_v6.1_LTS_2023.1/arch/arm64/boot/dts/xilinx/alinx-axu2cga.dts
+===================================================================
+--- /dev/null
++++ linux-headers-xlnx_rebase_v6.1_LTS_2023.1/arch/arm64/boot/dts/xilinx/alinx-axu2cga.dts
+@@ -0,0 +1,434 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * dts file for Xilinx ZynqMP alinx AXU2CGA
++ *
++ * (C) Copyright 2022
++ *
++ * Gwenhael Goavec-Merou <gwenhael.goavec-merou@trabucayre.com>
++ */
++
++/dts-v1/;
++
++#include "zynqmp.dtsi"
++#include "zynqmp-clk-ccf.dtsi"
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
++#include <dt-bindings/phy/phy.h>
++
++/ {
++	model = "Alinx AXU2CGA";
++	compatible = "xlnx,alinx-axu2cga", "xlnx,zynqmp";
++
++	aliases {
++		ethernet0 = &gem3;
++		i2c0 = &i2c1;
++		rtc0 = &rtc;
++		serial0 = &uart1;
++		spi0 = &spi1;
++		usb0 = &usb0;
++	};
++
++	chosen {
++		bootargs = "earlycon";
++		stdout-path = "serial0:115200n8";
++	};
++
++	memory@0 {
++		device_type = "memory";
++		reg = <0x0 0x0 0x0 0x40000000>;
++	};
++
++	cpus {
++		/delete-node/ cpu@2;
++		/delete-node/ cpu@3;
++	};
++
++	pmu {
++		compatible = "arm,armv8-pmuv3";
++		interrupt-parent = <&gic>;
++		interrupts = <0 143 4>,
++				<0 144 4>;
++		interrupt-affinity = <&cpu0>,
++				<&cpu1>;
++	};
++
++	clock_si5332_0: clk27 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <27000000>;
++	};
++
++	clock_si5332_1: clk26 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
++
++	clock_si5332_2: clk25 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
++
++	clock_si5332_3: clk33 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <33300000>;
++	};
++
++	clock_si5332_4: clk1001 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++	};
++
++	clock_si5332_5: clk1002 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <100000000>;
++	};
++
++	clock_si5332_6: clk25_eth {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <25000000>;
++	};
++
++	/* 26MHz reference crystal */
++	ref26: ref26M {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <26000000>;
++	};
++};
++
++&gem3 {
++	status = "okay";
++	phy-handle = <&phy0>;
++	phy-mode = "rgmii-id";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_gem3_default>;
++	phy0: ethernet-phy@1 {
++		reg = <0x1>;
++		ti,rx-internal-delay = <0x8>;
++		ti,tx-internal-delay = <0xa>;
++		ti,fifo-depth = <0x1>;
++		ti,dp83867-rxctrl-strap-quirk;
++	};
++};
++
++&gpio {
++	status = "okay";
++	gpio-line-names = "QSPI_CLK", "QSPI_DQ1", "QSPI_DQ2", "QSPI_DQ3", "QSPI_DQ0", /* 0 - 4 */
++		"QSPI_CS_B", "", "", "", "", /* 5 - 9 */
++		"", "", "", "", "", /* 10 - 14 */
++		"", "", "", "", "", /* 15 - 19 */
++		"", "", "", "", "UART1_TX", /* 20 - 24 */
++		"UART1_RX", "", "DP_AUX_OUT", "DP_HPD", "DP_OE", /* 25 - 29 */
++		"DP_AUX_IN", "HUB_RESET_IO", "I2C1_SCL", "I2C1_SDA", "", /* 30 - 34 */
++		"", "", "PCIE_RESET_N", "", "", /* 35 - 39 */
++		"", "", "", "", "USB_RESET_N", /* 40 - 44 */
++		"SD1_CD", "SD1_D0", "SD1_D1", "SD1_D2", "SD1_D3", /* 45 - 49 */
++		"SD1_CMD", "SD1_CLK", "USB0_CLK", "USB0_DIR", "USB0_DATA2", /* 50 - 54 */
++		"USB0_NXT", "USB0_DATA0", "USB0_DATA1", "USB0_STP", "USB0_DATA3", /* 55 - 59 */
++		"USB0_DATA4", "USB0_DATA5", "USB0_DATA6", "USB0_DATA7", "PHY1_TXCLK", /* 60 - 64 */
++		"PHY1_TXD0", "PHY1_TXD1", "PHY1_TXD2", "PHY1_TXD3", "PHY1_TXCTL", /* 65 - 69 */
++		"PHY1_RXCLK", "PHY1_RXD0", "PHY1_RXD1", "PHY1_RXD2", "PHY1_RXD3", /* 70 - 74 */
++		"PHY1_RXCTL", "PHY1_MDC", "PHY1_MDIO", /* 75 - 77, MIO end and EMIO start */
++		"", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "", "", "", "", "", "", "",
++		"", "", "", "";
++};
++
++&gpu {
++	status = "okay";
++};
++
++&i2c1 {
++	status = "okay";
++	pinctrl-names = "default", "gpio";
++	pinctrl-0 = <&pinctrl_i2c1_default>;
++	pinctrl-1 = <&pinctrl_i2c1_gpio>;
++	scl-gpios = <&gpio 32 GPIO_ACTIVE_HIGH>;
++	sda-gpios = <&gpio 33 GPIO_ACTIVE_HIGH>;
++	clock-frequency = <100000>;
++	si5332: clock-generator@76 {
++		compatible = "silabs,si5332";
++		reg = <0x76>;
++		#clock-cells = <2>;
++		#address-cells = <0>;
++		clocks = <&ref26>;
++		clock-names = "xtal";
++		clock-output-names = "si5352";
++
++		si5332_0: out@0 {
++			/* refclk0 for PS-GT, used for DP */
++			reg = <0>;
++			always-on;
++		};
++		si5332_1: out@1 {
++			/* refclk1 for PS-GT, used for USB */
++			reg = <1>;
++			always-on;
++		};
++		si5332_2: out@2 {
++			/* refclk1 for PS-GT, used for USB-HUB */
++			reg = <2>;
++			always-on;
++		};
++		si5332_3: out@3 {
++			/* refclk1 for PS-GT, used for PS_REF_CLK 33.3 MHz */
++			reg = <3>;
++			always-on;
++		};
++		si5332_4: out@4 {
++			/* refclk4 for PCIe Ref clk 100 MHz */
++			reg = <4>;
++			always-on;
++		};
++		si5332_5: out@5 {
++			/* refclk5 for PCIe Ref clk 100MHz */
++			reg = <5>;
++			always-on;
++		};
++		si5332_6: out@6 {
++			/* refclk6 for PS-GT, used for ETH Phy */
++			reg = <6>;
++			always-on;
++		};
++		si5332_7: out@7 {
++			/* refclk7 for USB-PHY clock */
++			reg = <7>;
++			always-on;
++		};
++	};
++};
++
++&pcie {
++	status = "okay";
++};
++
++&pinctrl0 {
++	status = "okay";
++	pinctrl_i2c1_default: i2c1-default {
++		mux {
++			groups = "i2c1_8_grp";
++			function = "i2c1";
++		};
++
++		conf {
++			groups = "i2c1_8_grp";
++			bias-pull-up;
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
++	};
++
++	pinctrl_i2c1_gpio: i2c1-gpio {
++		mux {
++			groups = "gpio0_32_grp", "gpio0_33_grp";
++			function = "gpio0";
++		};
++
++		conf {
++			groups = "gpio0_32_grp", "gpio0_33_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
++	};
++
++	pinctrl_sdhci1_default: sdhci1-default {
++		mux {
++			groups = "sdio1_0_grp";
++			function = "sdio1";
++		};
++
++		conf {
++			groups = "sdio1_0_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++			bias-disable;
++		};
++
++		mux-cd {
++			groups = "sdio1_cd_0_grp";
++			function = "sdio1_cd";
++		};
++
++		conf-cd {
++			groups = "sdio1_cd_0_grp";
++			bias-high-impedance;
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
++	};
++
++	pinctrl_uart1_default: uart1-default {
++		mux {
++			groups = "uart1_6_grp";
++			function = "uart1";
++		};
++
++		conf {
++			groups = "uart1_6_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
++
++		conf-rx {
++			pins = "MIO25";
++			bias-high-impedance;
++		};
++
++		conf-tx {
++			pins = "MIO24";
++			bias-disable;
++		};
++	};
++
++	pinctrl_usb0_default: usb0-default {
++		mux {
++			groups = "usb0_0_grp";
++			function = "usb0";
++		};
++
++		conf {
++			groups = "usb0_0_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
++
++		conf-rx {
++			pins = "MIO52", "MIO53", "MIO55";
++			bias-high-impedance;
++		};
++
++		conf-tx {
++			pins = "MIO54", "MIO56", "MIO57", "MIO58", "MIO59",
++				   "MIO60", "MIO61", "MIO62", "MIO63";
++			bias-disable;
++		};
++	};
++
++	pinctrl_gem3_default: gem3-default {
++		mux {
++			function = "ethernet3";
++			groups = "ethernet3_0_grp";
++		};
++
++		conf {
++			groups = "ethernet3_0_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++		};
++
++		conf-rx {
++			pins = "MIO70", "MIO71", "MIO72", "MIO73", "MIO74",
++									"MIO75";
++			bias-high-impedance;
++			low-power-disable;
++		};
++
++		conf-tx {
++			pins = "MIO64", "MIO65", "MIO66", "MIO67", "MIO68",
++									"MIO69";
++			bias-disable;
++			low-power-enable;
++		};
++
++		mux-mdio {
++			function = "mdio3";
++			groups = "mdio3_0_grp";
++		};
++
++		conf-mdio {
++			groups = "mdio3_0_grp";
++			slew-rate = <SLEW_RATE_SLOW>;
++			power-source = <IO_STANDARD_LVCMOS18>;
++			bias-disable;
++		};
++	};
++};
++
++&psgtr {
++	status = "okay";
++	/* pcie, usb3, dp */
++	clocks = <&clock_si5332_5>, <&clock_si5332_1>, <&clock_si5332_0>;
++	clock-names = "ref0", "ref1", "ref2";
++};
++
++&rtc {
++	status = "okay";
++};
++
++&sdhci1 {
++	no-1-8-v;
++	status = "okay";
++	bus-width = <0x4>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_sdhci1_default>;
++	xlnx,mio-bank = <0>;
++	disable-wp;
++};
++
++&uart1 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart1_default>;
++};
++
++/* ULPI SMSC USB3320 */
++&usb0 {
++	status = "okay";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usb0_default>;
++	phy-names = "usb3-phy";
++	phys = <&psgtr 1 PHY_TYPE_USB3 0 1>;
++};
++
++&dwc3_0 {
++	status = "okay";
++	dr_mode = "host";
++	maximum-speed = "super-speed";
++};
++
++&watchdog0 {
++	status = "okay";
++};
++
++&zynqmp_dpdma {
++	status = "okay";
++};
++
++&zynqmp_dpsub {
++	status = "okay";
++	phy-names = "dp-phy0", "dp-phy1";
++	phys = <&psgtr 3 PHY_TYPE_DP 0 2>,
++		   <&psgtr 2 PHY_TYPE_DP 1 2>;
++};
++
++&zynqmp_dp_snd_pcm0 {
++	status = "okay";
++};
++
++&zynqmp_dp_snd_pcm1 {
++	status = "okay";
++};
++
++&zynqmp_dp_snd_card0 {
++	status = "okay";
++};
++
++&zynqmp_dp_snd_codec0 {
++	status = "okay";
++};
