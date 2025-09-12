@@ -1,5 +1,4 @@
 source "$BR2_EXTERNAL_BUILDROOT_EXTERNAL_PATH/package/nextpnr/Config.in"
 source "$BR2_EXTERNAL_BUILDROOT_EXTERNAL_PATH/package/icestorm/Config.in"
-source "$BR2_EXTERNAL_BUILDROOT_EXTERNAL_PATH/package/soapy-sdr/Config.in"
 source "$BR2_EXTERNAL_BUILDROOT_EXTERNAL_PATH/package/yosys-abc/Config.in"
 source "$BR2_EXTERNAL_BUILDROOT_EXTERNAL_PATH/package/yosys/Config.in"
