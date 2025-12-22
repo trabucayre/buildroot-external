@@ -10,7 +10,7 @@
 setenv devnum 0
 setenv partid 1
 setenv kernel_image uImage
-setenv fdtfile zynq-arty-z7.dtb
+setenv fdtfile %DTBFILE%.dtb
 
 setenv bootargs console=ttyPS0,115200 root=/dev/mmcblk0p2 rw rootwait earlyprintk
 

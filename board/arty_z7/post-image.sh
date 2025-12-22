@@ -8,7 +8,13 @@ DTB=$(sed -nr \
           "${BR2_CONFIG}")
 BOARD_DIR="$(dirname $0)"
 
-${HOST_DIR}/bin/mkimage -c none -A arm -T script -d ${BOARD_DIR}/sdboot.cmd ${BINARIES_DIR}/boot.scr
+SDBOOT_TMP="${BUILD_DIR}/sdboot_tmp.cmd"
+sed -e "s/%DTBFILE%/${DTB}/" \
+    ${BOARD_DIR}/sdboot.cmd \
+    > ${SDBOOT_TMP}
+
+${HOST_DIR}/bin/mkimage -c none -A arm -T script -d ${SDBOOT_TMP} ${BINARIES_DIR}/boot.scr
+rm -rf "${SDBOOT_TMP}"
 
 GENIMAGE_CFG="$(mktemp --suffix genimage.cfg)"
 GENIMAGE_TMP="${BUILD_DIR}/genimage.tmp"
